@@ -101,24 +101,29 @@ private:
     {
         int run_keyframe_ = 0;
         int keyframe_counter_ = 0;
+        int stress_counter_ = 0;
 
         Theif() : shadow_(make_spr(13)),
                   bag_(make_spr(19)),
                   top_half_(make_spr(3)),
-                  legs_(make_spr(12))
+                  legs_(make_spr(12)),
+                  stress_(make_spr(20))
         {
             shadow_.put_below();
+            stress_.set_visible(false);
         }
 
-        void update()
+        void update(bool can_move)
         {
             bool running = true;
 
-            bn::fixed base_speed = 1.70;
-            base_speed -= pumpkin_count_ * bn::fixed(0.04);
+            bn::fixed base_speed = 2.4;
+            base_speed -= pumpkin_count_ * bn::fixed(0.07);
             bn::fixed diagonal_speed = base_speed / bn::fixed(1.41);
 
-            if (bn::keypad::up_held()) {
+            if (not can_move) {
+                running = false;
+            } else if (bn::keypad::up_held()) {
                 if (bn::keypad::left_held()) {
                     move(-diagonal_speed, -diagonal_speed);
                 } else if (bn::keypad::right_held()) {
@@ -170,6 +175,19 @@ private:
                 legs_.set_item(bn::sprite_items::ppick_tileset, 12);
                 run_keyframe_ = 0;
             }
+
+            if (not running) {
+                stress_.set_visible(false);
+            } else if (pumpkin_count_ >= 6) {
+                if (++stress_counter_ == 20) {
+                    stress_counter_ = 0;
+                    if (stress_.visible()) {
+                        stress_.set_visible(false);
+                    } else {
+                        stress_.set_visible(true);
+                    }
+                }
+            }
         }
 
         void move(bn::fixed dx, bn::fixed dy)
@@ -182,11 +200,13 @@ private:
                 legs_.set_horizontal_flip(true);
                 shadow_.set_horizontal_flip(true);
                 bag_.set_horizontal_flip(true);
+                stress_.set_horizontal_flip(true);
             } else if (dx < 0) {
                 top_half_.set_horizontal_flip(false);
                 legs_.set_horizontal_flip(false);
                 shadow_.set_horizontal_flip(false);
                 bag_.set_horizontal_flip(false);
+                stress_.set_horizontal_flip(false);
             }
 
             new_x = bn::clamp(new_x, bn::fixed(-120 + 16), bn::fixed(120 - 16));
@@ -206,9 +226,13 @@ private:
             if (bag_.horizontal_flip()) {
                 bag_.set_x(x - 10);
                 bag_.set_y(y - 3);
+                stress_.set_x(x + 3);
+                stress_.set_y(y - 2);
             } else {
                 bag_.set_x(x + 10);
                 bag_.set_y(y - 3);
+                stress_.set_x(x - 3);
+                stress_.set_y(y - 2);
             }
         }
 
@@ -258,13 +282,14 @@ private:
         bn::sprite_ptr bag_;
         bn::sprite_ptr top_half_;
         bn::sprite_ptr legs_;
+        bn::sprite_ptr stress_;
         int pumpkin_count_ = 0;
     };
 
     static bool has_intersection(const Pumpkin& p, const Theif& t)
     {
         bn::fixed_rect r1(p.sprite_.position(), {16, 16});
-        bn::fixed_rect r2(t.top_half_.position(), {16, 24});
+        bn::fixed_rect r2(t.top_half_.position(), {16, 28});
 
         return r1.intersects(r2);
     }

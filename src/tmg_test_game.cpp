@@ -33,7 +33,7 @@ static const unsigned char map_circ[7][12]
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     {0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0},
     {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1},
-    {1, 0, 0, 2, 0, 0, 1, 0, 0, 0, 0, 1},
+    {1, 0, 0, 2, 0, 0, 1, 0, 1, 1, 0, 1},
     {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1},
     {0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0},
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -44,24 +44,11 @@ static const unsigned char map_bar[7][12]
 {
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0},
     {0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0},
-    {0, 0, 2, 0, 1, 1, 1, 1, 1, 0, 0, 0},
-    {0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0},
-    {0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0},
-};
-
-
-
-static const unsigned char map_wav[7][12]
-{
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0},
-    {0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0},
-    {1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0},
-    {1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0},
-    {1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0},
-    {0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0},
-    {0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0},
+    {0, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0},
+    {0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0},
 };
 
 
@@ -74,7 +61,16 @@ test_game::test_game(int completed_games, const mj::game_data& data)
                                 completed_games,
                                 data))
 {
-    load_map(map_bar);
+    switch (data.random.get() % 2) {
+    default:
+    case 0:
+        load_map(map_circ);
+        break;
+
+    case 1:
+        load_map(map_bar);
+        break;
+    }
 
     theif_.emplace();
 
@@ -109,11 +105,7 @@ mj::game_result test_game::play(const mj::game_data& data)
         }
     }
 
-    if (victory_) {
-        // TODO: write better code
-    } else {
-        theif_->update();
-    }
+    theif_->update(not victory_);
 
     if (pumpkins_.empty()) {
         if (not victory_ and not defeat_) {
