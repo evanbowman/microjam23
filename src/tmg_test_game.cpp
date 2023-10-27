@@ -53,6 +53,18 @@ static const unsigned char map_bar[7][12]
 
 
 
+static const unsigned char map_bowl[7][12]
+{
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 2, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0},
+    {0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0},
+    {0, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0},
+    {0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0},
+    {0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+};
+
+
 
 test_game::test_game(int completed_games, const mj::game_data& data)
     : bg_(bn::regular_bg_items::ppick_background.create_bg((256 - 240) / 2,
@@ -61,7 +73,7 @@ test_game::test_game(int completed_games, const mj::game_data& data)
                                 completed_games,
                                 data))
 {
-    switch (data.random.get() % 2) {
+    switch (data.random.get() % 3) {
     default:
     case 0:
         load_map(map_circ);
@@ -69,6 +81,10 @@ test_game::test_game(int completed_games, const mj::game_data& data)
 
     case 1:
         load_map(map_bar);
+        break;
+
+    case 2:
+        load_map(map_bowl);
         break;
     }
 
