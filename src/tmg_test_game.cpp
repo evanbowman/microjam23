@@ -8,7 +8,7 @@
 #include "bn_regular_bg_items_tmg_press_a.h"
 #include "bn_regular_bg_items_tmg_you_lose.h"
 #include "bn_regular_bg_items_tmg_you_win.h"
-
+#include "bn_log.h"
 
 
 namespace
@@ -33,7 +33,7 @@ static const unsigned char map_circ[7][12]
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     {0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0},
     {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1},
-    {1, 0, 0, 2, 0, 0, 1, 0, 1, 1, 0, 1},
+    {0, 1, 0, 2, 0, 0, 1, 0, 1, 1, 0, 1},
     {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1},
     {0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0},
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -45,7 +45,7 @@ static const unsigned char map_bar[7][12]
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0},
     {0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0},
-    {0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     {0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0},
     {0, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0},
     {0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0},
@@ -66,14 +66,29 @@ static const unsigned char map_bowl[7][12]
 
 
 
+static const unsigned char map_wave1[7][12]
+{
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1},
+    {0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0},
+    {2, 1, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1},
+    {0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0},
+    {0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0},
+};
+
+
+
 test_game::test_game(int completed_games, const mj::game_data& data)
     : bg_(bn::regular_bg_items::ppick_background.create_bg((256 - 240) / 2,
                                                            (256 - 160) / 2)),
-      total_frames_(play_jingle(mj::game_jingle_type::METRONOME_16BEAT,
+      total_frames_(play_jingle(mj::game_jingle_type::TOTSNUK05,
                                 completed_games,
                                 data))
 {
-    switch (data.random.get() % 3) {
+    BN_LOG(total_frames_);
+
+    switch (data.random.get() % 4) {
     default:
     case 0:
         load_map(map_circ);
@@ -85,6 +100,10 @@ test_game::test_game(int completed_games, const mj::game_data& data)
 
     case 2:
         load_map(map_bowl);
+        break;
+
+    case 3:
+        load_map(map_wave1);
         break;
     }
 

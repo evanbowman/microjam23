@@ -178,7 +178,7 @@ private:
 
             if (not running) {
                 stress_.set_visible(false);
-            } else if (pumpkin_count_ >= 6) {
+            } else if (pumpkin_count_ >= 7) {
                 if (++stress_counter_ == 20) {
                     stress_counter_ = 0;
                     if (stress_.visible()) {
@@ -226,13 +226,13 @@ private:
             if (bag_.horizontal_flip()) {
                 bag_.set_x(x - 10);
                 bag_.set_y(y - 3);
-                stress_.set_x(x + 3);
-                stress_.set_y(y - 2);
+                stress_.set_x(x + 4);
+                stress_.set_y(y - 3);
             } else {
                 bag_.set_x(x + 10);
                 bag_.set_y(y - 3);
-                stress_.set_x(x - 3);
-                stress_.set_y(y - 2);
+                stress_.set_x(x - 4);
+                stress_.set_y(y - 3);
             }
         }
 
